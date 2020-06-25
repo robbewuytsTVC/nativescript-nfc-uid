@@ -20,7 +20,7 @@ export class MainComponent extends observable.Observable implements OnInit {
     public doStartTagListener() {
         let that = this;
         this.nfc.setOnTagDiscoveredListener((data: NfcTagData) => {
-            console.log("Tag discovered! " + data.id);
+            alert("UID: " + data.id);
             that.set("lastTagDiscovered", data.id);
         }).then(() => {
             console.log("OnTagDiscovered Listener set");

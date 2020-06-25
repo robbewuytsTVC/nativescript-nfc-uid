@@ -135,7 +135,7 @@ export class Nfc implements NfcApi, NfcSessionInvalidator {
 
         this.messageToWrite = NfcHelper.ndefEmptyMessage();
 
-        this.startScanSession((data) => {}, {
+        this.startScanSession((data) => { }, {
           stopAfterFirstRead: false,
           scanHint: "Hold near writable NFC tag to erase."
         });
@@ -193,6 +193,17 @@ export class Nfc implements NfcApi, NfcSessionInvalidator {
 }
 
 class NfcHelper {
+
+  public static getTagUIDAsDecArray(tag: NFCTag): any {
+    var uid = this.getTagUID(tag);
+    return NfcHelper.hexToDecArray(NfcHelper.nsdataToHexArray(uid)); //TODO: verify if Android has the same output
+  }
+
+  public static getTagUID(tag: NFCTag): any {
+    var nfcNHelper: NfcNativeHelper = NfcNativeHelper.new();
+    var uid = nfcNHelper.getTagUID(tag);
+    return uid;
+  }
 
   public static ndefEmptyMessage(): NFCNDEFMessage {
     let type: NSData = NfcHelper.uint8ArrayToNSData([]);
@@ -283,7 +294,7 @@ class NfcHelper {
     };
   }
 
-  public static stringToBytes(input: string) {
+  private static stringToBytes(input: string) {
     let bytes = [];
     for (let n = 0; n < input.length; n++) {
       let c = input.charCodeAt(n);
@@ -301,7 +312,7 @@ class NfcHelper {
     return bytes;
   }
 
-  public static uint8ArrayToNSData(array): NSData {
+  private static uint8ArrayToNSData(array): NSData {
     let data: NSMutableData = NSMutableData.alloc().initWithCapacity(array.count);
     for (let item of array) {
       data.appendBytesLength(new interop.Reference(interop.types.uint8, item), 1);
@@ -365,10 +376,6 @@ class NfcHelper {
     }
     return result;
   }
-
-  private static buf2hexArrayNr(buffer) { // buffer is an ArrayBuffer
-    return Array.prototype.map.call(new Uint8Array(buffer), x => +(x.toString(16)));
-  }
 }
 
 /* NFCTagReaderSessionDelegate */
@@ -399,15 +406,13 @@ class NFCTagReaderSessionDelegateImpl extends NSObject implements NFCTagReaderSe
   tagReaderSessionDidDetectTags(session: NFCTagReaderSession, tags: NSArray<NFCTag> | NFCTag[]): void {
     console.log("tagReaderSessionDidDetectTags");
 
-    var tag = tags[0];
-
-    // TODO: fill with UID
+    var ids = NfcHelper.getTagUIDAsDecArray(tags[0]);
     var nfcTagData: NfcTagData = {
-      id: [0],
+      id: ids,
       techList: []
     };
     session.invalidateSession();
-    
+
     this.resultCallback(nfcTagData);
   }
 
