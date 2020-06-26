@@ -194,9 +194,8 @@ export class Nfc implements NfcApi, NfcSessionInvalidator {
 
 class NfcHelper {
 
-  public static getTagUIDAsDecArray(tag: NFCTag): any {
-    var uid = this.getTagUID(tag);
-    return NfcHelper.hexToDecArray(NfcHelper.nsdataToHexArray(uid)); //TODO: verify if Android has the same output
+  public static getTagUIDAsInt8Array(tag: NFCTag): any {
+    return this.nsDataToInt8Array(this.getTagUID(tag));
   }
 
   public static getTagUID(tag: NFCTag): any {
@@ -206,9 +205,9 @@ class NfcHelper {
   }
 
   public static ndefEmptyMessage(): NFCNDEFMessage {
-    let type: NSData = NfcHelper.uint8ArrayToNSData([]);
-    let id: NSData = NfcHelper.uint8ArrayToNSData([]);
-    const payload: NSData = NfcHelper.uint8ArrayToNSData([]);
+    let type: NSData = this.uint8ArrayToNSData([]);
+    let id: NSData = this.uint8ArrayToNSData([]);
+    const payload: NSData = this.uint8ArrayToNSData([]);
     let record = NFCNDEFPayload.alloc().initWithFormatTypeIdentifierPayload(NFCTypeNameFormat.Empty, type, id, payload);
     let records: NSMutableArray<NFCNDEFPayload> = NSMutableArray.new();
     records.addObject(record);
@@ -220,24 +219,24 @@ class NfcHelper {
 
     if (arg.textRecords !== null) {
       arg.textRecords.forEach((textRecord) => {
-        let type: NSData = NfcHelper.uint8ArrayToNSData([0x54]);
+        let type: NSData = this.uint8ArrayToNSData([0x54]);
         let ids = [];
         if (textRecord.id) {
           for (let j = 0; j < textRecord.id.length; j++) {
             ids.push(textRecord.id[j]);
           }
         }
-        let id: NSData = NfcHelper.uint8ArrayToNSData(ids);
+        let id: NSData = this.uint8ArrayToNSData(ids);
 
         let langCode = textRecord.languageCode || "en";
-        let encoded = NfcHelper.stringToBytes(langCode + textRecord.text);
+        let encoded = this.stringToBytes(langCode + textRecord.text);
         encoded.unshift(langCode.length);
 
         let payloads = [];
         for (let n = 0; n < encoded.length; n++) {
           payloads[n] = encoded[n];
         }
-        const payload: NSData = NfcHelper.uint8ArrayToNSData(payloads);
+        const payload: NSData = this.uint8ArrayToNSData(payloads);
         let record = NFCNDEFPayload.alloc().initWithFormatTypeIdentifierPayload(NFCTypeNameFormat.NFCWellKnown, type, id, payload);
         records.addObject(record);
       });
@@ -318,6 +317,11 @@ class NfcHelper {
       data.appendBytesLength(new interop.Reference(interop.types.uint8, item), 1);
     }
     return data;
+  }
+
+  private static nsDataToInt8Array(data) {
+    let buffer = interop.bufferFromData(data);
+    return new Int8Array(buffer);
   }
 
   private static nsdataToHexString(data): string {
@@ -406,7 +410,7 @@ class NFCTagReaderSessionDelegateImpl extends NSObject implements NFCTagReaderSe
   tagReaderSessionDidDetectTags(session: NFCTagReaderSession, tags: NSArray<NFCTag> | NFCTag[]): void {
     console.log("tagReaderSessionDidDetectTags");
 
-    var ids = NfcHelper.getTagUIDAsDecArray(tags[0]);
+    var ids = NfcHelper.getTagUIDAsInt8Array(tags[0]);
     var nfcTagData: NfcTagData = {
       id: ids,
       techList: []
