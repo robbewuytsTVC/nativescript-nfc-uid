@@ -329,7 +329,7 @@ export class Nfc implements NfcApi {
   public setOnTagDiscoveredListener(callback: (data: NfcTagData) => void): Promise<any> {
     return new Promise((resolve, reject) => {
       onTagDiscoveredListener = callback;
-      resolve();
+      resolve("res");
     });
   }
 
@@ -337,7 +337,7 @@ export class Nfc implements NfcApi {
     return new Promise((resolve, reject) => {
       // TODO use options, some day
       onNdefDiscoveredListener = callback;
-      resolve();
+      resolve("res");
     });
   }
 
@@ -364,7 +364,7 @@ export class Nfc implements NfcApi {
 
       let errorMessage = this.writeNdefMessage(ndefMessage, tag);
       if (errorMessage === null) {
-        resolve();
+        resolve("res");
       } else {
         reject(errorMessage);
       }
@@ -399,7 +399,7 @@ export class Nfc implements NfcApi {
 
         let errorMessage = this.writeNdefMessage(ndefMessage, tag);
         if (errorMessage === null) {
-          resolve();
+          resolve("res");
         } else {
           reject(errorMessage);
         }

@@ -9,7 +9,8 @@
         "declaration": true,
         "lib": [
             "es6",
-            "dom"
+            "dom",
+            "ESNext"
         ],
         "baseUrl": ".",
         "paths": {

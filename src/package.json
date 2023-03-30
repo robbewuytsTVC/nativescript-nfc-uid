@@ -1,6 +1,6 @@
 {
-  "name": "nativescript-nfc",
-  "version": "4.1.0",
+  "name": "nativescript-nfc-fix-uid",
+  "version": "1.0.25",
   "description": "NFC plugin for your NativeScript app",
   "main": "nfc",
   "typings": "index.d.ts",
@@ -39,8 +39,8 @@
     "NDEF"
   ],
   "author": {
-    "name": "Eddy Verbruggen",
-    "email": "eddyverbruggen@gmail.com"
+    "name": "Robbe Wuyts",
+    "email": "robbe.wuyts@thevaluechain.be"
   },
   "bugs": {
     "url": "https://github.com/EddyVerbruggen/nativescript-nfc/issues"
@@ -49,12 +49,15 @@
   "homepage": "https://github.com/EddyVerbruggen/nativescript-nfc",
   "readmeFilename": "README.md",
   "devDependencies": {
+    "@nativescript/core": "^8.5.0",
+    "@nativescript/types": "~7.0.4",
+    "@nativescript/webpack": "~3.0.7",
     "nativescript-dev-typescript": "~0.10.0",
+    "rimraf": "^2.5.0",
     "tns-core-modules": "~6.2.0",
     "tns-platform-declarations": "~6.2.0",
-    "typescript": "~3.4.5",
-    "rimraf": "^2.5.0",
-    "tslint": "^5.0.0"
+    "tslint": "^5.0.0",
+    "typescript": "^5.0.2"
   },
   "bootstrapper": "nativescript-plugin-seed"
 }
